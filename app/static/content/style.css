@@ -1,6 +1,6 @@
     body {
-		    font-family: arial;
-		    margin:0px;
+            font-family: arial;
+            margin:0px;
             background-color:#36454d;
             font-family: Arial, Helvetica, sans-serif;
     }
@@ -11,17 +11,17 @@
         margin:0px;
     }
     .parent-div {
-	    width:100%;
-	    height:620px;	
+        width:100%;
+        height:620px;   
     }
 
     .login-main {
-		    width:100%;
-		    height:50%;
-		    position: relative;
-		    top:15%;
-		    margin:0 auto;
-		    color:#fff;
+            width:100%;
+            height:50%;
+            position: relative;
+            top:15%;
+            margin:0 auto;
+            color:#fff;
     }
     .info {
         text-align:center;
@@ -38,3 +38,66 @@
         margin-top:5px;
         font-size:20px;
     }
+    #signin-google {
+        cursor:pointer;
+        width: 20%;
+        background: white;
+        margin: auto;
+        height: 40px;
+   
+    }
+    #signin-google img {
+       display: block;
+        width: 25px;
+        height: 25px;
+        line-height: 25px;
+        float: left;
+        margin:8px;
+    
+    }
+    #signin-google p {
+        color:#000;
+        width: 70%;
+        height: 40px;
+        float: left;
+        margin: 0px 0px 0px 10px;
+        line-height:40px;
+    }
+    #logo {
+        width:150px;
+        height:150px;
+        margin:auto;
+        display:block;
+        text-align:center;
+        border-radius:100%;
+    }
+    .errorMsg {
+        width:100%;
+        height:40px;
+        line-height:40px;
+        color:white;
+        background:#cc1a26;
+        text-align:center;
+        font-size:16px;
+        display:none;
+
+    }
+
+     @media only screen and (min-width: 800px) and (max-width: 1000px)  {
+
+       #signin-google {
+           width:26%;
+       }
+     }
+     @media only screen and (min-width: 600px) and (max-width: 799px)  {
+
+       #signin-google {
+           width:35%;
+       }
+     }
+      @media only screen and (max-width: 599px)   {
+
+       #signin-google {
+           width:60%;
+       }
+     }
