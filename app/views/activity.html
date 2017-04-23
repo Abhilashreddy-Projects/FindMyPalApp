@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" ng-app="myApp">
+<head>
+    <meta charset="utf-8" />
+    <title>Profile Info</title>
+	
+	<link rel="stylesheet" href="../static/content/style.css" />
+    
+    
+    
+    
+	
+	
+<!-- Script Files-->
+
+
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+ <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
+ <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+ 
+    
+ <script type="text/javascript" src="../static/scripts/project/activity.js"></script>
+ 
+
+<!-- End of Script-->
+
+
+</head>
+<body class="activity">
+<header> 
+		<div class="header">
+			<img  id="site-logo" src="../static/images/friends.jpg"><a href="/activity"></a></img>
+			<label>FindMyPal</label>
+			<ul>
+				<li id="logout"><a href="/">Sign Out</a></li>
+		
+			</ul>
+
+		</div>
+
+</header>
+
+
+<div id="activity-container"  ng-controller="ActivityController">
+	
+
+	<div class="left-nav">
+		<div class="basic-info">
+			
+			<img id="profile_picture">
+			<p id="profile-name"> <span id="username"> </span></p>
+			<div class="left-nav-list"> 
+				<!--<p> Recommended </p>-->
+			
+
+        <!--New Event Creation Starts Here -->
+        <div class="event-success-msg">
+            <p  id="eventMessage"></p>
+        </div>
+        
+        <div ng-if="'newEventCreation' == myView" class="newEvent-description">
+            <h1> Create a new Event </h1>
+            <label>Title </label>
+            <input type="text" id="event-title" placeholder="Please enter the event name" required/>
+            <label> Category </label>
+            <select id="category">
+                <option value="Other">Select the Event Category</option>
+                <option value="Library">Library</option>
+                <option value="Sports">Sports</option>
+                <option value="RecCenter">Rec Center</option>
+                <option value="Pool">Pool</option>
+                <option value="Movies">Movies</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label>Description </label>
+            <textarea id="event-description" placeholder="enter your event description" required></textarea>
+            <label>Location</label>
+            <input type="text" id="event-location" placeholder="Enter the location" required />
+            <label> Time </label>
+            <input type="time" id="event-time" placeholder="Enter the time of the event" />
+            <label> Date </label>
+            <input type="date" id="event-date" placeholder="mm/dd/yyyy" required/>
+            <div class="event-buttons">
+                <button ng-click="postNewEvent()"> Post Event </button>
+                <button ng-click="resetForm()"> Reset </button>
+
+            </div>
+            
+             
+        </div>
+
+        <!--New Event Creation Code Ends Here -->
+
+
+
+
+        <!-- Created Events Code Starts Here -->
+
+        <div ng-if="'createdActivities' == myView" id="createdActivites">
+            
+           <ul id = "newEvent"> 
+			
+               <li ng-click="viewCurrentEvent(event)" ng-repeat="event in events.slice().reverse() " class="event">
+                   <ul>
+                       <li  id="categoryLabel" ng-bind="event.category"></li>
+                       <li class="eventContentOverflow" ng-bind="'Title:' + (event.title)"></li>
+                       <li class="eventContentOverflow" ng-bind="'Description:' + (event.description)"></li>
+                       <li class="eventContentOverflow" ng-bind="'Location:' + (event.location)"></li>
+                       <li ng-bind="'Time:' + (event.time) "></li>
+                       <li ng-bind="'Date:' + (event.date) "></li>
+
+                       <li id="actions"> Edit Event</li>
+                       <li id="actions" ng-click="DeleteEvent($event,event)"> Delete Event  </li>
+
+                   </ul>
+
+               </li>
+			</ul>
+            
+             
+        </div>
+       
+
+       
+
+
+        <!-- Created Events Code Ends Here-->
+
+
+
+
+	<!-- Forwarding to Profile Page -->
+		<form action = "/profile" id="homepage">
+
+			<input type="hidden" name = "user_id">
+
+		</form>
+
+	<!-- Forwarding to Profile Page -->
+
+</div>
+</body>
+</html>
