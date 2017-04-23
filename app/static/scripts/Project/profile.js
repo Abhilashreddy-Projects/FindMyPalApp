@@ -16,7 +16,6 @@ $(document).ready(function () {
 
     firebase.initializeApp(config);
 
-
     var currentUrl = window.location.href;
     
     var url = currentUrl.split('?');
@@ -94,8 +93,6 @@ $(document).ready(function () {
         writeUserData(userProfile);
     });
         
-    
-    
 
     function writeUserData(userProfile) {
         firebase.database().ref('user_profiles/' + currentUser.uid).set({
@@ -199,8 +196,6 @@ $(document).ready(function () {
     });
 
     //Signout function 
-
-
     $("#logout").on('click', function () {
 
         firebase.auth().signOut().then(function () {
