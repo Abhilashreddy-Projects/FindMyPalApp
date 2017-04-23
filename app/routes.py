@@ -21,3 +21,21 @@ def home():
 def register():
     """ returns register page """
     return dict()
+
+@route('/profile')
+@view('profile')
+def profile():
+    """Renders the contact page."""
+    
+    
+    return dict(
+                title='Contact',
+                message='Your contact page.',
+                year=datetime.now().year
+                )
+
+@route('/emailConfirmation')
+@view('emailConfirmation')
+def register():
+    """ returns emailConfirmation page """
+    return dict()
