@@ -109,7 +109,23 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
 
 
 
-   
+    //=======================Show created Events and new Event Creation =============================//
+    $scope.showCreadtedActivities = function () {
+
+        $scope.myView = "createdActivities";
+        $scope.events = $firebaseArray(databaseRef);
+       
+
+    }
+
+    $scope.showNewEventCreation = function () {
+
+        $scope.myView = "newEventCreation";
+       
+
+    }
+    //=======================Show created Events and new Event Creation =============================//
+
 
 
     //===========================Trimmed Result && Interested Category ===========================//
@@ -184,7 +200,132 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
     //=============================Current Event View Ends Here ========================//
 
 
-   
+    //============================Joined Activity Code Starts Here ======================//
+
+    $scope.joinActivity = function (event) {
+       
+        var newEvent = angular.copy(event); //This is created to preserve the $$hashkey,$id,$priority property in the original object
+       
+        console.log(newEvent);
+        var id;
+        if (event.$id) {
+            id = event.$id;
+        }
+        else {
+            id = event.id;
+        }
+        
+        delete newEvent.$$hashKey;
+        delete newEvent.$id;
+        delete newEvent.$priority;
+        joinedActivityDbRef.child(id).set(newEvent).then(function () {
+
+            $scope.joinedNewEvents = $firebaseArray(joinedActivityDbRef);
+            $scope.recordExist = true;
+
+        });
+    }
+
+    $scope.unjoinActivity = function (event) {
+
+        var id;
+        if (event.$id) {
+            id = event.$id;
+        }
+        else {
+            id = event.id;
+        }
+       
+        joinedActivityDbRef.child(id).remove().then(function (eventsJoined) {
+
+            $scope.joinedNewEvents = $firebaseArray(joinedActivityDbRef);
+            $scope.recordExist = false;
+
+        });
+    }
+
+    $scope.showJoinedActivities = function () {
+        $scope.myView = "joinedActivities";
+        $scope.joinedActivities = $firebaseArray(joinedActivityDbRef);
+        
+    }
+
+    //=============================Joined Activity Code Ends Here ========================//
+
+    
+
+}]);
+
+
+/* ================== Event Management ============================*/
+
+$(document).ready(function () {
+
+
+    var currentUser;
+
+    //sign In and Sign Out recognition
+
+    firebase.auth().onAuthStateChanged(function (user) {
+
+        if (user) {
+            currentUser = user;
+            console.log(firebase.database().ref('/user_profiles/' + uid));
+            
+            firebase.database().ref('/user_profiles/' + uid).once('value').then(function (snapshot) {
+                console.log(snapshot.val());
+                var username = snapshot.val().nickname;
+                if (username) {
+                    document.getElementById("username").innerHTML = username;
+                }
+                else {
+                    document.getElementById("username").innerHTML = user.displayName;
+                }
+            }).catch(function (error) {
+
+                document.getElementById("username").innerHTML = user.displayName;
+
+            });
+
+
+            
+
+        }
+        else {
+            console.log('error');
+        }
+
+    });
+    //Sign out
+
+
+
+
+
+    // Create a root reference for storage
+    var storageRef = firebase.storage().ref();
+    var storageReference = firebase.storage().ref('/userProfilePictures/' + uid);
+
+    //Checking for an Profile picture
+    storageReference.getDownloadURL().then(function (url) {
+
+        // Or inserted into an <img> element:
+        var img = document.getElementById('profile_picture');
+        img.src = url;
+    }).catch(function (error) {
+
+        // Attaching the image to the image source 
+        storageRef.child('images/default-avatar.jpg').getDownloadURL().then(function (url) {
+
+            // Or inserted into an <img> element:
+            var img = document.getElementById('profile_picture');
+            img.src = url;
+        }).catch(function (error) {
+            console.log(error.message);
+        });
+
+
+    });
 
     //Signout function 
 
