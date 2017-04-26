@@ -6,3 +6,6 @@ Features Completed till Now:
 2. User Profile view and update
 3. Activity Creation
 4. Activities and Categories Listing
+5. CRUD operations on Activities
+6. User can Join Activity
+7. Showing the people who registered for Activity
