@@ -4,14 +4,10 @@
 <head>
     <meta charset="utf-8" />
     <title>Activity Sharing</title>
-	
-	<link rel="stylesheet" href="../static/content/style.css" />
+    
+    <link rel="stylesheet" href="../static/content/style.css" />
     
     
-    
-    
-	
-	
 <!-- Script Files-->
 
 
@@ -29,61 +25,61 @@
 </head>
 <body class="activity">
 <header> 
-		<div class="header">
-			<img  id="site-logo" src="../static/images/friends.jpg"><a href="/activity"></a>
-			<label>FindMyPal</label>
-			<ul>
+        <div class="header">
+            <img  id="site-logo" src="../static/images/friends.jpg"><a href="/activity"></a>
+            <label>FindMyPal</label>
+            <ul>
                
                 <li class="profile"><a>Profile</a></li>
-				<li id="logout"><a href="/">Sign Out</a></li>
+                <li id="logout"><a href="/">Sign Out</a></li>
                 
-		
-			</ul>
+        
+            </ul>
 
-		</div>
+        </div>
 
 </header>
 
 
 <div id="activity-container"  ng-controller="ActivityController">
-	
+    
 
-	<div class="left-nav">
-		<div class="basic-info">
-			
-			<img id="profile_picture">
-			<p id="profile-name"> <span id="username"> </span></p>
-			
-			<div class="left-nav-list"> 
-				<p>Activities Posted</p>
-				<ul> 
+    <div class="left-nav">
+        <div class="basic-info">
+            
+            <img id="profile_picture">
+            <p id="profile-name"> <span id="username"> </span></p>
+            
+            <div class="left-nav-list"> 
+                <p>Activities Posted</p>
+                <ul> 
                         <li ng-click="trimmedResult('all')">All Activities</li>
                         <li ng-click="trimmedResult('Interested')">Interested Category</li>
-						<li ng-click="trimmedResult('Library')">Library</li>
-						<li ng-click="trimmedResult('Sports')">Sports</li>
-						<li ng-click="trimmedResult('RecCenter')">Rec Center</li>
-						<li ng-click="trimmedResult('Pool')">Pool</li>
+                        <li ng-click="trimmedResult('Library')">Library</li>
+                        <li ng-click="trimmedResult('Sports')">Sports</li>
+                        <li ng-click="trimmedResult('RecCenter')">Rec Center</li>
+                        <li ng-click="trimmedResult('Pool')">Pool</li>
                         <li ng-click="trimmedResult('Movies')">Movies</li>
                         <li ng-click="trimmedResult('Other')">Other</li>
-				</ul>
-				
-			</div>
-			<div class="left-nav-list">
-				<p>My Activites</p>
-				<ul>
-					<li ng-click="showCreadtedActivities()">Created Activites</li>
-					<li ng-click="showJoinedActivities()">Joined Activites</li>
+                </ul>
+                
+            </div>
+            <div class="left-nav-list">
+                <p>My Activites</p>
+                <ul>
+                    <li ng-click="showCreadtedActivities()">Created Activites</li>
+                    <li ng-click="showJoinedActivities()">Joined Activites</li>
                     <li ng-click="showNewEventCreation()">create new Activity</li>
 
 
-				</ul>
-				
-				
-				
-			</div>
-		</div>
-	</div>
-	<div class="right-nav">
+                </ul>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+    <div class="right-nav">
 
         <!--New Event Creation Starts Here -->
         <div class="event-success-msg">
@@ -136,11 +132,12 @@
 
         <!-- Created Events Code Starts Here -->
         <p id="banner" ng-if="'createdActivities' == myView"> Created Activities</p>
-        <div ng-if="'createdActivities' == myView" id="createdActivites">
+        <div ng-if="'createdActivities' == myView" id="createdActivites" class="createdActivitiesView">
             
+            <p id="noEventMatch"> Oops!!! You have no created Events. <a id="createNew" ng-click="showNewEventCreation()"> Create here</a> </p>
            <ul id = "newEvent"> 
-			
-               <li id="newPost" ng-repeat="event in events.slice().reverse() " class="event">
+            
+               <li id="newPost" ng-repeat="event in events.slice().reverse()" ng-if="event.createdBy == currentUser" ng-init="showError('.createdActivitiesView')" class="event">
                    
                    <ul>
                        <li  id="categoryLabel" ng-bind="event.category"></li>
@@ -158,9 +155,9 @@
                    </ul>
 
                </li>
-			</ul>
+            </ul>
             
-            <p id="noEventMatch" ng-hide="events.length"> Oops!!! You have no created Events. <a id="createNew" ng-click="showNewEventCreation()"> Create here</a> </p>
+           
         </div>
        
 
@@ -179,8 +176,8 @@
             <p id="noEventMatch"> Oops!!! No event matches your interest. Consider Changing your interest here <a class="createNew" id="profilePage"> Profile Setiings </a> </p>
                 <div ng-repeat="myTitle in interestedCategory" id="filterByCategory">
                    
-                    <ul ng-repeat="users in events">
-                        <li ng-click="viewCurrentEvent(event)" ng-repeat="event in users" ng-if="event.category == myTitle.$value" ng-init="showError('.recommendedActivitiesView')">
+                    <ul>
+                        <li ng-click="viewCurrentEvent(event)" ng-repeat="event in events.slice().reverse()" ng-if="event.category == myTitle.$value" ng-init="showError('.recommendedActivitiesView')">
 
                             <ul ng-show="angular.isObject(event)"  class="event trimmedView">
                                 
@@ -217,10 +214,10 @@
 
         <div ng-if="'allActivites' == myView" id="createdActivites" class="allActivitiesView">
             <p id="noEventMatch"> Oops!!! No events exists in this category. would you like to post one ? <a id="createNew" ng-click="showNewEventCreation()"> Create here </a> </p>
-            <ul ng-repeat="users in events">
+            <ul>
 
                
-                <li ng-click="viewCurrentEvent(event,key)" ng-repeat="event in users">
+                <li ng-click="viewCurrentEvent(event,key)" ng-repeat="event in events.slice().reverse()">
                    
                     <ul ng-show="angular.isObject(event)"  ng-init="showError('.allActivitiesView')"class="event trimmedView">
                        
@@ -255,10 +252,10 @@
         <p id="banner" ng-if="'trimmedActivites' == myView" ng-bind="myTitle"></p>
         <div ng-if="'trimmedActivites' == myView" id="createdActivites"class="trimmedActivitiesView">
             <p id="noEventMatch" class="trimmedViewNoEventErrorMsg" > Oops!!! No events exists in this category. would you like to post one ? <a id="createNew" ng-click="showNewEventCreation()"> Create here </a> </p>
-            <ul ng-repeat="users in events">
+            <ul>
              
 
-                <li ng-click="viewCurrentEvent(event,key)" ng-repeat="event in users" ng-if="event.category == myTitle" ng-init="showError('.trimmedActivitiesView')">
+                <li ng-click="viewCurrentEvent(event)" ng-repeat="event in events.slice().reverse()" ng-if="event.category == myTitle" ng-init="showError('.trimmedActivitiesView')">
                    
                     <ul ng-show="angular.isObject(event)" class="event trimmedView">
                         
@@ -332,10 +329,10 @@
             <div  ng-if="'joinedActivities' == myView" id="createdActivites" class="joinedActivitiesView">
 
                 <p id="noEventMatch"> Oops!!! You have not joined any Event. <a id="createNew" ng-click="trimmedResult('all')"> Join here</a> </p>
-                <ul id="newEvent" ng-repeat="users in events">
+                <ul id="newEvent">
 
                    
-                    <li ng-click="viewCurrentEvent(event,key)" ng-repeat="event in users" >
+                    <li ng-click="viewCurrentEvent(event,key)" ng-repeat="event in events" >
                         <ul ng-repeat="joinedUser in event.joinedUserIds" ng-if="joinedUser==currentUsrId"  ng-init="showError('.joinedActivitiesView')" class="event trimmedView">
 
                                 <!--<li class="eventContentOverflow" ng-bind="'ID:' + (event.id)"></li>-->
@@ -374,17 +371,17 @@
         </div>
 
 
-	</div>
-	
+    </div>
+    
 
-	<!-- Forwarding to Profile Page -->
-		<form action = "/profile" id="homepage">
+    <!-- Forwarding to Profile Page -->
+        <form action = "/profile" id="homepage">
 
-			<input type="hidden" name = "user_id">
+            <input type="hidden" name = "user_id">
 
-		</form>
+        </form>
 
-	<!-- Forwarding to Profile Page -->
+    <!-- Forwarding to Profile Page -->
 
 </div>
 </body>

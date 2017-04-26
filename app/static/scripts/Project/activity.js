@@ -34,21 +34,18 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 });
 
-//firebase.database().ref('/user_profiles/' + uid).once('value').then(function (snapshot) {
-//    currrent_user_displayName = snapshot.val().displayName;
-//});
 
 
 /* ================== Event Management ============================*/
 
 var app = angular.module('myApp', ['firebase']);
 
-var databaseRef = firebase.database().ref().child('Events').child(uid);
-var eventsDB = firebase.database().ref().child('Events');
 
-//Uncommnet below for testing
-//var databaseRef = firebase.database().ref().child('TestDB-Events').child(uid);
-//var eventsDB = firebase.database().ref().child('TestDB-Events');
+var databaseRef = firebase.database().ref().child('Events')
+
+//Uncommnet this for testing
+//var databaseRef = firebase.database().ref().child('TestDB-Events')
+
 app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObject', function ($scope, $firebaseArray, $firebaseObject) {
 
    
@@ -397,6 +394,7 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
 
         $scope.myView = "createdActivities";
         $scope.events = $firebaseArray(databaseRef);
+        $scope.currentUser = uid;
        
 
     }
@@ -478,8 +476,8 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
         $scope.currentObjId = event.id;
         $scope.userCreatedEvent = false;
         
-        var currentViewObject = eventsDB.child(event.createdBy);
-        $scope.Events = $firebaseArray(currentViewObject);
+        //var currentViewObject = eventsDB.child(event.createdBy);
+        $scope.Events = $firebaseArray(databaseRef);
 
         
         //Check for Joined Activity 
@@ -496,7 +494,7 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
    
         //Check for Joined Activity 
        
-
+       
 
 
     }
@@ -532,7 +530,7 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
         delete newEvent.$id;
         delete newEvent.$priority;
 
-        eventsDB.child(event.createdBy).child(event.id).set(newEvent).then(function () {
+        databaseRef.child(event.id).set(newEvent).then(function () {
 
             //$scope.events = $firebaseArray(databaseRef);
             $(function () {
@@ -555,25 +553,29 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
 
     function joinedActivity(event) {
 
-         var event = eventsDB.child(event.createdBy + "/" + event.id);
-        var eventsJoined = $firebaseArray(event);
-
+        
+       
+        var event = databaseRef.child(event.id);
+        var eventsJoined = $firebaseObject(event);
 
         var userId = [];
 
 
         eventsJoined.$loaded().then(function (eventsJoined) {
-            
-            userId = eventsJoined.joinedUserIds;
-            //angular.forEach(eventsJoined, function (value, index) {
-              //  userId = value.joinedUserIds;
 
-            //})
+            userId = eventsJoined.joinedUserIds;
+
+            //angular.forEach(eventsJoined, function (value, index) {
+               
+            //    userId = value.joinedUserIds;
+            //    console.log(value.joinedUserIds);
+            //});
 
             $scope.joinUser = true;
+            
 
             if (userId.indexOf(uid) !== -1) {
-
+                
                 $scope.recordExist = true;
             }
 
@@ -615,7 +617,7 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
         }
        
 
-        eventsDB.child(event.createdBy).child(event.id).set(newEvent).then(function () {
+        databaseRef.child(event.id).set(newEvent).then(function () {
 
             
             $(function () {
@@ -638,7 +640,7 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
 
         $scope.myView = "joinedActivities";
 
-        $scope.events = $firebaseArray(eventsDB);
+        $scope.events = $firebaseArray(databaseRef);
         $scope.currentUsrId = uid;
         
 
@@ -777,53 +779,6 @@ $(document).ready(function () {
 });
 
 
-
-//==========Show all registerd Users =========//
-//function viewAll() {
-
-//    $(function () {
-
-//        $(".registeredUsers ul li").each(function () {
-
-//            $(this).show();
-
-//        });
-//        $(".registeredUsers ul:last-child").append('<li onClick="viewLess()"  class="viewUsers" id="viewLessUsers">view less</li>');
-//        $(".registeredUsers #viewAllUsers").remove();
-//    });
-//}
-
-
-//function viewLess() {
-
-//    $(function () {
-
-//        var limit = 2;
-//        var i = 0;
-//        var viewLimitExceeds = false;
-
-//        $(".registeredUsers ul li").each(function () {
-
-//            if (i <= limit) {
-//                $(this).show();
-//                i++;
-//            }
-//            else {
-//                $(this).hide();
-//                viewLimitExceeds = true;
-//            }
-
-//        });
-
-//        if (viewLimitExceeds == true) {
-//            $(".registeredUsers ul:last-child").append('<li onClick="viewAll()"  class="viewUsers" id="viewAllUsers">view all registered Users</li>');
-//            $(".registeredUsers #viewLessUsers").remove();
-//        }
-
-//    });
-
-//}
-//==========Show all registerd Users =========//
 
 
 
