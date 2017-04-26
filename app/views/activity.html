@@ -3,7 +3,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" ng-app="myApp">
 <head>
     <meta charset="utf-8" />
-    <title>Profile Info</title>
+    <title>Activity Sharing</title>
 	
 	<link rel="stylesheet" href="../static/content/style.css" />
     
@@ -26,15 +26,17 @@
 
 <!-- End of Script-->
 
-
 </head>
 <body class="activity">
 <header> 
 		<div class="header">
-			<img  id="site-logo" src="../static/images/friends.jpg"><a href="/activity"></a></img>
+			<img  id="site-logo" src="../static/images/friends.jpg"><a href="/activity"></a>
 			<label>FindMyPal</label>
 			<ul>
+               
+                <li class="profile"><a>Profile</a></li>
 				<li id="logout"><a href="/">Sign Out</a></li>
+                
 		
 			</ul>
 
@@ -51,9 +53,7 @@
 			
 			<img id="profile_picture">
 			<p id="profile-name"> <span id="username"> </span></p>
-			<div class="left-nav-list"> 
-				<!--<p> Recommended </p>-->
-			</div>
+			
 			<div class="left-nav-list"> 
 				<p>Activities Posted</p>
 				<ul> 
@@ -91,12 +91,13 @@
         </div>
         
         <div ng-if="'newEventCreation' == myView" class="newEvent-description">
-            <h1> Create a new Event </h1>
+            <h1  ng-if="newPost"> Create a new Event </h1>
+            <h1 ng-if="editPost"> Edit your Post </h1>
             <label>Title </label>
             <input type="text" id="event-title" placeholder="Please enter the event name" required/>
             <label> Category </label>
-            <select id="category">
-                <option value="Other">Select the Event Category</option>
+            <select id="event-category">
+                <option value="none">Select the Event Category</option>
                 <option value="Library">Library</option>
                 <option value="Sports">Sports</option>
                 <option value="RecCenter">Rec Center</option>
@@ -113,8 +114,14 @@
             <input type="time" id="event-time" placeholder="Enter the time of the event" />
             <label> Date </label>
             <input type="date" id="event-date" placeholder="mm/dd/yyyy" required/>
+            <input type="hidden" id="event-id" />
+            <input type="hidden" id="users-registered" />
+            <input type="hidden" id="createdBy" />
+            <input type="hidden" id="event-username" />
+            <input type="hidden" id="event-joinedUserIds" />
             <div class="event-buttons">
-                <button ng-click="postNewEvent()"> Post Event </button>
+                <button ng-if="newPost" ng-click="postNewEvent()">Post Event</button>
+                <button ng-if="editPost" ng-click="saveEditedEvent()">Save Changes </button>
                 <button ng-click="resetForm()"> Reset </button>
 
             </div>
@@ -128,21 +135,24 @@
 
 
         <!-- Created Events Code Starts Here -->
-
+        <p id="banner" ng-if="'createdActivities' == myView"> Created Activities</p>
         <div ng-if="'createdActivities' == myView" id="createdActivites">
             
            <ul id = "newEvent"> 
 			
-               <li ng-click="viewCurrentEvent(event)" ng-repeat="event in events.slice().reverse() " class="event">
+               <li id="newPost" ng-repeat="event in events.slice().reverse() " class="event">
+                   
                    <ul>
                        <li  id="categoryLabel" ng-bind="event.category"></li>
+                       
                        <li class="eventContentOverflow" ng-bind="'Title:' + (event.title)"></li>
                        <li class="eventContentOverflow" ng-bind="'Description:' + (event.description)"></li>
                        <li class="eventContentOverflow" ng-bind="'Location:' + (event.location)"></li>
                        <li ng-bind="'Time:' + (event.time) "></li>
                        <li ng-bind="'Date:' + (event.date) "></li>
 
-                       <li id="actions"> Edit Event</li>
+                       <li id="actions" ng-click="viewCurrentEvent(event)"> View Event</li>
+                       <li id="actions" ng-click="EditEvent(event)"> Edit Event</li>
                        <li id="actions" ng-click="DeleteEvent($event,event)"> Delete Event  </li>
 
                    </ul>
@@ -150,7 +160,7 @@
                </li>
 			</ul>
             
-             
+            <p id="noEventMatch" ng-hide="events.length"> Oops!!! You have no created Events. <a id="createNew" ng-click="showNewEventCreation()"> Create here</a> </p>
         </div>
        
 
@@ -163,15 +173,16 @@
 
         <!-- Interested Category Posts -->
 
-
-        <div ng-if="'interestedActivities' == myView" id="createdActivites">
+        <p id="banner" ng-if="'interestedActivities' == myView"> Recommended Activities</p>
+        <div ng-if="'interestedActivities' == myView" id="createdActivites" class="recommendedActivitiesView">
   
+            <p id="noEventMatch"> Oops!!! No event matches your interest. Consider Changing your interest here <a class="createNew" id="profilePage"> Profile Setiings </a> </p>
                 <div ng-repeat="myTitle in interestedCategory" id="filterByCategory">
                    
                     <ul ng-repeat="users in events">
-                        <li ng-click="viewCurrentEvent(event)" ng-repeat="event in users" ng-if="event.category == myTitle.$value">
+                        <li ng-click="viewCurrentEvent(event)" ng-repeat="event in users" ng-if="event.category == myTitle.$value" ng-init="showError('.recommendedActivitiesView')">
 
-                            <ul ng-show="angular.isObject(event)"  class="event">
+                            <ul ng-show="angular.isObject(event)"  class="event trimmedView">
                                 
                                         <li id="categoryLabel" ng-bind="event.category"></li>
                                         <li class="eventContentOverflow" ng-bind="'Title:' + (event.title)"></li>
@@ -181,8 +192,7 @@
                                         <li class="eventContentOverflow" ng-bind="'Date:' + (event.date) "></li>
 
                                         <li id="actions"> View Event </li>
-                                        <!--<li ng-click="DeleteEvent($event,event)"> Delete Event  </li>-->
-
+                 
                                    
                             </ul>
 
@@ -192,9 +202,6 @@
                      
                 </div>
 
-               
-           
-           <!--<p id="noEventMatch" ng-hide= "event"> No Event which matches this category </p>-->
 
         </div>
 
@@ -206,20 +213,17 @@
 
         <!-- All Activity Results -->
 
+        <p id="banner" ng-if="'allActivites' == myView" > All Activities</p>
 
-        <div ng-if="'allActivites' == myView" id="createdActivites">
-
+        <div ng-if="'allActivites' == myView" id="createdActivites" class="allActivitiesView">
+            <p id="noEventMatch"> Oops!!! No events exists in this category. would you like to post one ? <a id="createNew" ng-click="showNewEventCreation()"> Create here </a> </p>
             <ul ng-repeat="users in events">
 
-                <!--<li ng-repeat="(key, value) in users">
-                <span ng-bind="key"> - </span> <span ng-bind="value"> </span>
-
-            </li>-->
-
+               
                 <li ng-click="viewCurrentEvent(event,key)" ng-repeat="event in users">
-
-                    <ul ng-show="angular.isObject(event)" class="event">
-
+                   
+                    <ul ng-show="angular.isObject(event)"  ng-init="showError('.allActivitiesView')"class="event trimmedView">
+                       
                         <li id="categoryLabel" ng-bind="event.category"></li>
                         <li class="eventContentOverflow" ng-bind="'Title:' + (event.title)"></li>
                         <li class="eventContentOverflow" ng-bind="'Description:' + (event.description)"></li>
@@ -228,7 +232,7 @@
                         <li class="eventContentOverflow" ng-bind="'Date:' + (event.date) "></li>
 
                         <li id="actions"> View Event </li>
-                        <!--<li ng-click="DeleteEvent($event,event)"> Delete Event  </li>-->
+                        
 
 
                     </ul>
@@ -236,7 +240,7 @@
 
                 </li>
             </ul>
-            <!--<p id="noEventMatch" ng-show="eventExistence"> No Event which matches this category </p>-->
+            
 
         </div>
 
@@ -248,21 +252,17 @@
 
         <!-- Trimmed Results -->
 
-
-        <div ng-if="'trimmedActivites' == myView" id="createdActivites">
-
+        <p id="banner" ng-if="'trimmedActivites' == myView" ng-bind="myTitle"></p>
+        <div ng-if="'trimmedActivites' == myView" id="createdActivites"class="trimmedActivitiesView">
+            <p id="noEventMatch" class="trimmedViewNoEventErrorMsg" > Oops!!! No events exists in this category. would you like to post one ? <a id="createNew" ng-click="showNewEventCreation()"> Create here </a> </p>
             <ul ng-repeat="users in events">
-                
-                <!--<li ng-repeat="(key, value) in users">
-                    <span ng-bind="key"> - </span> <span ng-bind="value"> </span>
+             
 
-                </li>-->
-
-                <li ng-click="viewCurrentEvent(event,key)" ng-repeat="event in users" ng-if="event.category == myTitle">
-
-                    <ul ng-show="angular.isObject(event)" class="event">
+                <li ng-click="viewCurrentEvent(event,key)" ng-repeat="event in users" ng-if="event.category == myTitle" ng-init="showError('.trimmedActivitiesView')">
+                   
+                    <ul ng-show="angular.isObject(event)" class="event trimmedView">
                         
-                        <!--<li class="eventContentOverflow" ng-bind="'ID:' + (event.id)"></li>-->
+                        
                         <li class="eventContentOverflow" ng-bind="'Title:' + (event.title)"></li>
                         <li class="eventContentOverflow" ng-bind="'Description:' + (event.description)"></li>
                         <li class="eventContentOverflow" ng-bind="'Location:' + (event.location)"></li>
@@ -270,7 +270,7 @@
                         <li class="eventContentOverflow" ng-bind="'Date:' + (event.date) "></li>
 
                         <li id="actions"> View Event </li>
-                        <!--<li ng-click="DeleteEvent($event,event)"> Delete Event  </li>-->
+                      
 
 
                     </ul>
@@ -278,7 +278,7 @@
 
                 </li>
             </ul>
-            <!--<p id="noEventMatch" ng-show="eventExistence"> No Event which matches this category </p>-->
+   
 
         </div>
 
@@ -289,20 +289,34 @@
 
         <!-- Current Event View -->
 
-        <div ng-if="'currentEventView' == myView" class="currentEventView">
+        <div ng-if="'currentEventView' == myView && (currentEvent.id == currentObjId)" ng-repeat="currentEvent in Events"  class="currentEventView">
 
                    
             <h1 ng-bind="(currentEvent.category)"></h1>
+            <pre>Activity CreatedBy      </pre><p ng-bind="(currentEvent.username)"></p>
             <pre>Activity Title      </pre><p ng-bind="(currentEvent.title)"></p>
             <pre>Activity Time      </pre><p ng-bind="(currentEvent.date) + ' ' + (currentEvent.time)"></p>
             <pre>Activity Location      </pre> <p ng-bind="currentEvent.location"></p>
+            <pre>Number of Users Joined      </pre> <p ng-bind="currentEvent.users.length"></p>
             
                 <h3>Acitivity Description</h3> 
                 <div class="currentEventDescription" ng-bind="(currentEvent.description)"></div>
 
-            
-            <button ng-if="!recordExist" ng-click="joinActivity(currentEvent)"> Join Activity </button>
-            <button ng-if="recordExist" ng-click="unjoinActivity(currentEvent)"> Un Join</button>
+
+            <div class="registeredUsers">
+                <h3> Regsitered Users for this event </h3>
+               
+                    <ul ng-repeat="user in currentEvent.users">
+                        <li ng-bind="user"></li>
+
+                    </ul>
+                    
+               
+            </div>
+
+            <button ng-if="userCreatedEvent"> Joined </button>
+            <button ng-if="!recordExist" ng-show="joinUser" ng-click="joinActivity(currentEvent)"> Join Activity </button>
+            <button ng-if="recordExist" ng-show="joinUser" ng-click="unjoinActivity(currentEvent)"> Un Join</button>
             
         </div>
 
@@ -313,27 +327,42 @@
 
 
         <!-- Joined Activites -->
+        <p id="banner" ng-if="'joinedActivities' == myView"> Joined Activities</p>
+       
+            <div  ng-if="'joinedActivities' == myView" id="createdActivites" class="joinedActivitiesView">
 
-            <div  ng-if="'joinedActivities' == myView" id="createdActivites">
+                <p id="noEventMatch"> Oops!!! You have not joined any Event. <a id="createNew" ng-click="trimmedResult('all')"> Join here</a> </p>
+                <ul id="newEvent" ng-repeat="users in events">
 
-                <ul id="newEvent">
+                   
+                    <li ng-click="viewCurrentEvent(event,key)" ng-repeat="event in users" >
+                        <ul ng-repeat="joinedUser in event.joinedUserIds" ng-if="joinedUser==currentUsrId"  ng-init="showError('.joinedActivitiesView')" class="event trimmedView">
 
-                    <li ng-click="viewCurrentEvent(event)" ng-repeat="event in joinedActivities.slice().reverse() " class="event">
-                        <ul>
-                            <li id="categoryLabel" ng-bind="event.category"></li>
-                            <li class="eventContentOverflow" ng-bind="'Title:' + (event.title)"></li>
-                            <li class="eventContentOverflow" ng-bind="'Description:' + (event.description)"></li>
-                            <li class="eventContentOverflow" ng-bind="'Location:' + (event.location)"></li>
-                            <li ng-bind="'Time:' + (event.time) "></li>
-                            <li ng-bind="'Date:' + (event.date) "></li>
+                                <!--<li class="eventContentOverflow" ng-bind="'ID:' + (event.id)"></li>-->
+                                <li id="categoryLabel" ng-bind="event.category"></li>
+                                <li class="eventContentOverflow" ng-bind="'Title:' + (event.title)"></li>
+                                <li class="eventContentOverflow" ng-bind="'Description:' + (event.description)"></li>
+                                <li class="eventContentOverflow" ng-bind="'Location:' + (event.location)"></li>
+                                <li class="eventContentOverflow" ng-bind="'Time:' + (event.time) "></li>
+                                <li class="eventContentOverflow" ng-bind="'Date:' + (event.date) "></li>
+                                <li class="eventContentOverflow" ng-bind="'Registered Users:' + (event.users.length) "></li>
 
-                            <li id="actions"> View Event</li>
+                                <li id="actions"> View Event </li>
                             
 
                         </ul>
+                        
+
 
                     </li>
                 </ul>
+
+
+
+                
+                
+                
+
             </div>
 
 
@@ -345,12 +374,6 @@
         </div>
 
 
-
-		<!--<div class="event-creation">
-			<input type="text" id="new-event" Placeholder="Post new Event">
-			<input type="button" value="Post">
-			
-		</div>-->
 	</div>
 	
 

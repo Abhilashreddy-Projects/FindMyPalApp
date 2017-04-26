@@ -1,4 +1,4 @@
-﻿// Initialize Firebase
+// Initialize Firebase
 
 
 $(document).ready(function () {
@@ -16,6 +16,7 @@ $(document).ready(function () {
 
     firebase.initializeApp(config);
 
+
     var currentUrl = window.location.href;
     
     var url = currentUrl.split('?');
@@ -31,10 +32,13 @@ $(document).ready(function () {
 
     firebase.auth().onAuthStateChanged(function (user) {
 
+        
         if (user) {
             currentUser = user;
             document.getElementById("username").innerHTML = user.displayName;
-
+            var userName = user.displayName.split(" ");
+            document.getElementById("firstname").value = userName[0];
+            document.getElementById("lastname").value = userName[userName.length - 1];
         }
         else {
             console.log('error');
@@ -81,20 +85,88 @@ $(document).ready(function () {
         userProfile.eduction_level = $("input[name='education-level']:checked").val();
         userProfile.education_year = $("input[name='education-year']:checked").val();
 
+       
 
         var interested_category = [];
         $.each($("input[name='interested-category']:checked"), function () {
             interested_category.push($(this).val());
         });
-        userProfile.interested_category = interested_category; 
+        userProfile.interested_category = interested_category;
+
+
+
+
+        //Script for validation
+
+        if (userProfile.firstname === "") {
+            
+            document.getElementById('profilePageMsg').innerHTML = "Please update your First Name";
+            showMessage();
+            return;
+        }
+        if (userProfile.lastname === "") {
+           
+            document.getElementById('profilePageMsg').innerHTML = "Please update your Last Name";
+            showMessage();
+            return;
+        }
+        if (userProfile.nickname === "") {
+           
+            document.getElementById('profilePageMsg').innerHTML = "Please update your Nick Name";
+            showMessage();
+            return;
+        }
+        if (userProfile.gender === "Choose Gender") {
+            
+            document.getElementById('profilePageMsg').innerHTML = "Please update your Gender";
+            showMessage();
+            return;
+        }
+
+        var educationLevel = $("input[name='education-level']:checked");
+        if (educationLevel.length === 0) {
+           
+            document.getElementById('profilePageMsg').innerHTML = "Please update your Education Level";
+            showMessage();
+            return
+        } else {
+            userProfile.eduction_level = educationLevel.val();
+        }
+
+        var educationYear = $("input[name='education-year']:checked");
+        console.log(educationYear);
+        if (educationYear.length == 0) {
+           
+            document.getElementById('profilePageMsg').innerHTML = "Please update your Education Year";
+            showMessage();
+            return;
+        }
+        /*else if (educationYear.val().trim() == "Other") {
+            var otherYear = $("#other-edu-year").val().trim();
+            if (otherYear === "") {
+                alert("Please input that other education year");
+                return;
+            } else {
+                userProfile.education_year = otherYear;
+            }
+            } */ 
+        else {
+            userProfile.education_year = educationYear.val();
+        }
+
+
+        //script for validation
          
-        console.log(userProfile);
+        
     
         writeUserData(userProfile);
     });
         
+    
+    
 
     function writeUserData(userProfile) {
+        document.getElementById('profilePageMsg').innerHTML = "Your Profile has been Updated!!! ";
         firebase.database().ref('user_profiles/' + currentUser.uid).set({
             displayName:currentUser.displayName,
             firstname: userProfile.firstname,
@@ -117,7 +189,13 @@ $(document).ready(function () {
         }, 3000) 
     }
 
-   
+    function showMessage() {
+
+        $(".success-msg").slideDown();
+        setTimeout(function () {
+            $(".success-msg").slideUp();
+        }, 3000)
+    }
 
     //Profile Page 
 
@@ -196,6 +274,8 @@ $(document).ready(function () {
     });
 
     //Signout function 
+
+
     $("#logout").on('click', function () {
 
         firebase.auth().signOut().then(function () {
@@ -220,7 +300,7 @@ $(document).ready(function () {
 
     });
 
-    $(".profile #site-logo").on('click', function () {
+    $(".profile #site-logo,#activityPage").on('click', function () {
 
 
         $("#homepage input").val(uid);

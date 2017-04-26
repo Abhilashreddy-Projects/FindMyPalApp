@@ -45,9 +45,11 @@
 				<div id="signin-google">
 					<img src="/static/images/google.png" />
 					<p> Sign in with Google </p>
+
 				</div>
 
 		<!-- Sign In with Google Logo and Button -->
+
 	</div>
 
 <!-- Main Home Page Contents Ends here -->
