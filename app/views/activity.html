@@ -287,6 +287,38 @@
 
         <!-- Trimmed Results -->
 
+        <!-- Current Event View -->
+
+        <div ng-if="'currentEventView' == myView && (currentEvent.id == currentObjId)" ng-repeat="currentEvent in Events"  class="currentEventView">
+
+                   
+            <h1 ng-bind="(currentEvent.category)"></h1>
+            <pre>Activity CreatedBy      </pre><p ng-bind="(currentEvent.username)"></p>
+            <pre>Activity Title      </pre><p ng-bind="(currentEvent.title)"></p>
+            <pre>Activity Time      </pre><p ng-bind="(currentEvent.date) + ' ' + (currentEvent.time)"></p>
+            <pre>Activity Location      </pre> <p ng-bind="currentEvent.location"></p>
+            <pre>Number of Users Joined      </pre> <p ng-bind="currentEvent.users.length"></p>
+            
+                <h3>Acitivity Description</h3> 
+                <div class="currentEventDescription" ng-bind="(currentEvent.description)"></div>
+
+
+            <div class="registeredUsers">
+                <h3> Regsitered Users for this event </h3>
+               
+                    <ul ng-repeat="user in currentEvent.users">
+                        <li ng-bind="user"></li>
+
+                    </ul>
+                    
+               
+            </div>
+
+            <button ng-if="userCreatedEvent"> Joined </button>
+            <button ng-if="!recordExist" ng-show="joinUser" ng-click="joinActivity(currentEvent)"> Join Activity </button>
+            <button ng-if="recordExist" ng-show="joinUser" ng-click="unjoinActivity(currentEvent)"> Un Join</button>
+            
+        </div>
 
 
 
@@ -343,40 +375,6 @@
 
 
 	</div>
-
-	
-        <!-- Current Event View -->
-
-        <div ng-if="'currentEventView' == myView && (currentEvent.id == currentObjId)" ng-repeat="currentEvent in Events"  class="currentEventView">
-
-                   
-            <h1 ng-bind="(currentEvent.category)"></h1>
-            <pre>Activity CreatedBy      </pre><p ng-bind="(currentEvent.username)"></p>
-            <pre>Activity Title      </pre><p ng-bind="(currentEvent.title)"></p>
-            <pre>Activity Time      </pre><p ng-bind="(currentEvent.date) + ' ' + (currentEvent.time)"></p>
-            <pre>Activity Location      </pre> <p ng-bind="currentEvent.location"></p>
-            <pre>Number of Users Joined      </pre> <p ng-bind="currentEvent.users.length"></p>
-            
-                <h3>Acitivity Description</h3> 
-                <div class="currentEventDescription" ng-bind="(currentEvent.description)"></div>
-
-
-            <div class="registeredUsers">
-                <h3> Regsitered Users for this event </h3>
-               
-                    <ul ng-repeat="user in currentEvent.users">
-                        <li ng-bind="user"></li>
-
-                    </ul>
-                    
-               
-            </div>
-
-            <button ng-if="userCreatedEvent"> Joined </button>
-            <button ng-if="!recordExist" ng-show="joinUser" ng-click="joinActivity(currentEvent)"> Join Activity </button>
-            <button ng-if="recordExist" ng-show="joinUser" ng-click="unjoinActivity(currentEvent)"> Un Join</button>
-            
-        </div>
 	
 
 	<!-- Forwarding to Profile Page -->
