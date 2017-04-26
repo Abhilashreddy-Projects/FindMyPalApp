@@ -20,6 +20,8 @@ $(document).ready(function () {
     
 
     // App sign in function
+
+
     $("#signin").click(function () {
 
         var email = $("#email").val();
@@ -49,6 +51,7 @@ $(document).ready(function () {
 
 
     //Sign in with Google
+
     $("#signin-google").click(function () {
 
         

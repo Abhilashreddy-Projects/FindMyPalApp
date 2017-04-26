@@ -114,7 +114,12 @@ $(function () {
 
                     writeUserData(user.uid, user_name, email);
 
-					user.sendEmailVerification();
+                   
+
+                   
+                    // Ends here
+
+                    user.sendEmailVerification();
                     $("#success").slideDown();
                     setTimeout(function () {
                         $("#registerForm").submit();
