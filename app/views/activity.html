@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="../static/content/style.css" />
     
     
+    
+    
+    
+    
 <!-- Script Files-->
 
 
@@ -251,7 +255,7 @@
 
         <p id="banner" ng-if="'trimmedActivites' == myView" ng-bind="myTitle"></p>
         <div ng-if="'trimmedActivites' == myView" id="createdActivites"class="trimmedActivitiesView">
-            <p id="noEventMatch" class="trimmedViewNoEventErrorMsg" > Oops!!! No events exists in this category. would you like to post one ? <a id="createNew" ng-click="showNewEventCreation()"> Create here </a> </p>
+            <p id="noEventMatch" class="trimmedViewNoEventErrorMsg" > Oops!!! No events exists in this category. would you like to post one ? <a id="createNew" ng-click="showNewEventCreationCategorySpecific(myTitle)"> Create here </a> </p>
             <ul>
              
 
@@ -303,8 +307,9 @@
             <div class="registeredUsers">
                 <h3> Regsitered Users for this event </h3>
                
-                    <ul ng-repeat="user in currentEvent.users">
-                        <li ng-bind="user"></li>
+                    <ul>
+                        <li ng-repeat="user in currentEvent.users"> <span id="userJoined" ng-bind="user"></span> <span id="user_uid" style='display:none' ng-bind="(currentEvent.joinedUserIds)[$index]"></span></li>
+                        
 
                     </ul>
                     
@@ -315,13 +320,13 @@
             <button ng-if="!recordExist" ng-show="joinUser" ng-click="joinActivity(currentEvent)"> Join Activity </button>
             <button ng-if="recordExist" ng-show="joinUser" ng-click="unjoinActivity(currentEvent)"> Un Join</button>
             
-             <div class="StaticContent">
+
+            <div class="StaticContent">
                 
                 <img src="../static/images/add1.jpg" />
 
 
             </div>
-
         </div>
 
 
@@ -373,13 +378,14 @@
 
 
         <!-- Joined Activites -->
-
+        
         <footer>
             <p> Please contact us at findmypal@gmail.com for your ads. </p>
-        </footer> 
+        </footer>
 
         </div>
-
+  
+   
 
     </div>
     
@@ -387,12 +393,32 @@
     <!-- Forwarding to Profile Page -->
         <form action = "/profile" id="homepage">
 
-            <input type="hidden" name = "user_id">
+            <input type="hidden" name = "currentUserId">
+            <input type="hidden" name="joinedUsrId" />
+            <input type="hidden" name="joinedUserStatus" />
 
         </form>
 
+
     <!-- Forwarding to Profile Page -->
 
-</div>
+    <form action="/profile" id="joinedUserProfileView">
+
+        <input type="hidden" name="currentUserId" />
+        <input type="hidden" name="joinedUsrId" />
+        <input type="hidden" name="joinedUserStatus" />
+
+    </form>
+
+
+    <!-- Logout Handline scenario -->
+    <form action="/" id="loginPageRedirect">
+
+       
+
+    </form>
+    
+    <!-- Logout Handline scenario -->
+
 </body>
 </html>

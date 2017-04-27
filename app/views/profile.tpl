@@ -40,7 +40,7 @@
 		<p id="profilePageMsg"> Your Profile has been Updated!!! </p>
 	</div>
 	<div class="basic-info">
-		<p> Hello <span id="username"> </span></p>
+		<p> <span id="username"> </span></p>
 		<img id="profile_picture"></img>
 		<label for="update_pic" class="update_pic"> Update Your Profile Picture</label>
 		<input type="file" id="update_pic"> </input>

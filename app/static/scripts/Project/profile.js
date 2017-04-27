@@ -19,57 +19,83 @@ $(document).ready(function () {
 
     var currentUrl = window.location.href;
     
-    var url = currentUrl.split('?');
-    var user_id = url[1].split('=');
+    var url_values = currentUrl.split('?');
+    url_values = url_values[1].split('&');
+
+    var user_id = url_values[0].split('=');
+    var joinedUser_id = url_values[1].split('=');
+    var joinedStatus = url_values[2].split('=');
 
     var uid = user_id[1];
-    
+    var joinedUserId = joinedUser_id[1];
+    var joinedUserStatus = joinedStatus[1];
+
+
     var currentUser;
 
     //sign In and Sign Out recognition
 
     $(".success-msg").hide();
 
-    firebase.auth().onAuthStateChanged(function (user) {
+    if (!joinedUserId) {
 
+        firebase.auth().onAuthStateChanged(function (user) {
+
+
+            if (user) {
+                currentUser = user;
+                document.getElementById("username").innerHTML = "Hello " + user.displayName;
+                var userName = user.displayName.split(" ");
+                document.getElementById("firstname").value = userName[0];
+                document.getElementById("lastname").value = userName[userName.length - 1];
+            }
+            else {
+                console.log('error');
+            }
+
+        });
+
+        profile(uid);
+        profilePicture(uid);
+        $("#update_profile").show();
+    }
+    else {
+        profile(joinedUserId);
+        profilePicture(joinedUserId);
+        $('#profilePic input').prop('readonly', true);
+        $('#profilePic input[type=radio],#profilePic input[type=checkbox],#profilePic select,#profilePic input[type=file]').prop('disabled', true);
+        $("#update_profile,.update_pic").hide();
         
-        if (user) {
-            currentUser = user;
-            document.getElementById("username").innerHTML = user.displayName;
-            var userName = user.displayName.split(" ");
-            document.getElementById("firstname").value = userName[0];
-            document.getElementById("lastname").value = userName[userName.length - 1];
-        }
-        else {
-            console.log('error');
-        }
-
-    });
+    }
+    
     //Sign out
 
-   
-    firebase.database().ref('/user_profiles/' + uid).once('value').then(function (snapshot) {
-        
-        var user_info = snapshot.val();
-        $("#firstname").val(user_info.firstname);
-        $("#lastname").val(user_info.lastname);
-        $("#nickname").val(user_info.nickname);
-        $("#middlename").val(user_info.middlename);
+    function profile(id) {
 
-        $("#gender").val(user_info.gender);
-        
-        $('.user-education-level input[value=' + user_info.eduction_level + ']').prop('checked', true);
-        $('.user-education-year input[value=' + user_info.education_year + ']').prop('checked', true);
+        firebase.database().ref('/user_profiles/' + id).once('value').then(function (snapshot) {
+
+            var user_info = snapshot.val();
+            $("#firstname").val(user_info.firstname);
+            $("#lastname").val(user_info.lastname);
+            $("#nickname").val(user_info.nickname);
+            $("#middlename").val(user_info.middlename);
+
+            $("#gender").val(user_info.gender);
+
+            $('.user-education-level input[value=' + user_info.eduction_level + ']').prop('checked', true);
+            $('.user-education-year input[value=' + user_info.education_year + ']').prop('checked', true);
 
 
-        $.each(user_info.interested_category, function (index,value) {
-            
-            $('.user-interested-category input[value=' + value + ']').prop('checked', true);
-          
+            $.each(user_info.interested_category, function (index, value) {
+
+                $('.user-interested-category input[value=' + value + ']').prop('checked', true);
+
+            });
+
+            // $("#profile_picture").attr('src', snapshot.val().profile_picture);
         });
-        
-       // $("#profile_picture").attr('src', snapshot.val().profile_picture);
-    });
+    }
+    
 
     //Profile Page
 
@@ -200,36 +226,38 @@ $(document).ready(function () {
     //Profile Page 
 
    
-    // Create a root reference for storage
+    
     var storageRef = firebase.storage().ref();
-    var storageReference = firebase.storage().ref('/userProfilePictures/' + uid);
+    var storageReference;
+    function profilePicture(id) {
 
-    //Checking for an Profile picture
-    storageReference.getDownloadURL().then(function (url) {
-
-        // Or inserted into an <img> element:
-        var img = document.getElementById('profile_picture');
-        img.src = url;
-        }).catch(function (error) {
+        // Create a root reference for storage
         
-        // Attaching the image to the image source 
-        storageRef.child('images/default-avatar.jpg').getDownloadURL().then(function (url) {
+        storageReference = firebase.storage().ref('/userProfilePictures/' + id);
+
+        //Checking for an Profile picture
+        storageReference.getDownloadURL().then(function (url) {
 
             // Or inserted into an <img> element:
             var img = document.getElementById('profile_picture');
             img.src = url;
         }).catch(function (error) {
-            console.log(error.message);
+
+            // Attaching the image to the image source 
+            storageRef.child('images/default-avatar.jpg').getDownloadURL().then(function (url) {
+
+                // Or inserted into an <img> element:
+                var img = document.getElementById('profile_picture');
+                img.src = url;
+            }).catch(function (error) {
+                console.log(error.message);
+            });
+
+
         });
 
-
-    });
-
-
-
+    }
   
-
-    
 
     //Uploading the profie picture
 
@@ -242,27 +270,22 @@ $(document).ready(function () {
         storageReference.put(file).on('state_changed', function (snapshot) {
 
             // Loading GIF while the image is uploading 
-            storageRef.child('images/loading.gif').getDownloadURL().then(function (url) {
+            //storageRef.child('images/loading.gif').getDownloadURL().then(function (url) {
 
-                // Or inserted into an <img> element:
-                var img = document.getElementById('profile_picture');
-                img.src = url;
-            }).catch(function (error) {
-                console.log(error.message);
-            });
+            //    // Or inserted into an <img> element:
+            //    var img = document.getElementById('profile_picture');
+            //    img.src = url;
 
+                
 
-
-
-
-        }, function (error) {
-
-            console.log(error.message);
-        }, function () {
+            //}).catch(function (error) {
+            //    console.log(error.message);
+            //});
 
             storageReference.getDownloadURL().then(function (url) {
 
                 // Or inserted into an <img> element:
+
                 var img = document.getElementById('profile_picture');
                 img.src = url;
             }).catch(function (error) {

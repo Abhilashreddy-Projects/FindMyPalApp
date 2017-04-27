@@ -7,7 +7,6 @@ var uid = user_id[1];
 
 
 
-
 // Initialize Firebase
 var config = {
     apiKey: "AIzaSyD8_nEsadS4xowGxBSAzipb5r1uqRiu6V4",
@@ -30,6 +29,11 @@ firebase.auth().onAuthStateChanged(function (user) {
     }
     else {
         console.log('error');
+        $(function () {
+
+            $("form#loginPageRedirect").submit();
+           
+        })
     }
 
 });
@@ -100,6 +104,7 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
 
         if (title === "") {
             document.getElementById("eventMessage").innerHTML = "Please Enter the Event Title";
+            document.getElementById("eventMessage").style.backgroundColor = 'red';
             showMsg();
             return
         } else {
@@ -108,6 +113,7 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
        
         if (category === "none") {
             document.getElementById("eventMessage").innerHTML = "Please Select the Event Category";
+            document.getElementById("eventMessage").style.backgroundColor = 'red';
             showMsg();
             return
         } else {
@@ -116,6 +122,7 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
 
         if (description === "") {
             document.getElementById("eventMessage").innerHTML = "Please Enter the Event Description";
+            document.getElementById("eventMessage").style.backgroundColor = 'red';
             showMsg();
             return
         } else {
@@ -124,6 +131,7 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
 
         if (location === "") {
             document.getElementById("eventMessage").innerHTML = "Please Enter the Event Location";
+            document.getElementById("eventMessage").style.backgroundColor = 'red';
             showMsg();
             return
         } else {
@@ -132,6 +140,7 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
 
         if (time === "") {
             document.getElementById("eventMessage").innerHTML = "Please Enter the Event Time";
+            document.getElementById("eventMessage").style.backgroundColor = 'red';
             showMsg();
             return
         }
@@ -147,12 +156,14 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
                 if (date === "") {
 
                     document.getElementById("eventMessage").innerHTML = "Please Enter the Valid Date";
+                    document.getElementById("eventMessage").style.backgroundColor = 'red';
                     showMsg();
                     return
                 }
                 else if (date !== "" && dateString < today) {
 
                     document.getElementById("eventMessage").innerHTML = "Please Enter the Valid Date";
+                    document.getElementById("eventMessage").style.backgroundColor = 'red';
                     showMsg();
                     return
                 }
@@ -161,6 +172,7 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
                 }
                 else {
                     document.getElementById("eventMessage").innerHTML = "Please Enter the Valid Time";
+                    document.getElementById("eventMessage").style.backgroundColor = 'red';
                     showMsg();
                     return
                 }
@@ -172,6 +184,7 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
                 if (eventTime_minutes <= current_time_minutes) {
 
                     document.getElementById("eventMessage").innerHTML = "Please Enter the Valid Time";
+                    document.getElementById("eventMessage").style.backgroundColor = 'red';
                     showMsg();
                     return
                 }
@@ -189,6 +202,7 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
 
         if (date === "") {
             document.getElementById("eventMessage").innerHTML = "Please Enter the Event Date";
+            document.getElementById("eventMessage").style.backgroundColor = 'red';
             showMsg();
             return
         }
@@ -196,6 +210,7 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
         else if (date !== "" && dateString < today) {
             
             document.getElementById("eventMessage").innerHTML = "Please choose a valid date";
+            document.getElementById("eventMessage").style.backgroundColor = 'red';
             showMsg();
             return
         }
@@ -233,6 +248,7 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
                 $(function () {
 
                     $("#eventMessage").text("Event has been Posted successfully");
+                    document.getElementById("eventMessage").style.backgroundColor = 'green';
                     setTimeout(function () {
                         $(function () {
 
@@ -411,6 +427,19 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
        
 
     }
+    $scope.showNewEventCreationCategorySpecific = function (selectVal) {
+        console.log(selectVal);
+        $scope.editPost = false;
+        $scope.newPost = true;
+        $(function () {
+            $(".newEvent-description input,.newEvent-description textarea").val("");
+            //$(".newEvent-description select").val($(".newEvent-description select option:first").val());
+            $(".newEvent-description select").val(selectVal);
+        })
+        $scope.myView = "newEventCreation";
+
+
+    }
     //=======================Show created Events and new Event Creation =============================//
 
 
@@ -447,7 +476,10 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
             $(function () {
                 $("#profilePage").click(function () {
 
-                    $("#homepage input").val(uid);
+                    $("#homepage input[name='currentUserId']").val(uid);
+                    $("#homepage input[name='joinedUsrId']").val("");
+                    $("#homepage input[name='joinedUserStatus']").val(false);
+
                     $("#homepage").submit();
                 });
             })
@@ -495,6 +527,24 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
         //Check for Joined Activity 
        
        
+        //Profile forwarding when user clicks on registered users
+        $(function () {
+            
+            $(".registeredUsers li span#userJoined").on('click', function () {
+
+                var uid_userJoined = $(this).siblings("#user_uid").text();
+              
+                
+                $("#joinedUserProfileView input[name='currentUserId']").val(uid);
+                $("#joinedUserProfileView input[name='joinedUsrId']").val(uid_userJoined);
+                $("#joinedUserProfileView input[name='joinedUserStatus']").val(true);
+
+                $("#joinedUserProfileView").submit();
+            });
+
+        });
+        
+        //Ends here
 
 
     }
@@ -750,10 +800,12 @@ $(document).ready(function () {
 
     $(".activity #profile_picture,.activity #profile-name, .profile").on('click', function () {
 
-       
-        $("#homepage input").val(uid);
-        $("#homepage").submit();
+        $("#homepage input[name='currentUserId']").val(uid);
+        $("#homepage input[name='joinedUsrId']").val("");
+        $("#homepage input[name='joinedUserStatus']").val(false);
 
+
+        $("#homepage").submit();
 
     });
 
@@ -776,7 +828,9 @@ $(document).ready(function () {
         $(this).css("color","#000");
     });
 
+
 });
+
 
 
 
