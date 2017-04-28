@@ -183,13 +183,35 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
 
                 if (eventTime_minutes <= current_time_minutes) {
 
-                    document.getElementById("eventMessage").innerHTML = "Please Enter the Valid Time";
-                    document.getElementById("eventMessage").style.backgroundColor = 'red';
-                    showMsg();
-                    return
+                    if (date === "") {
+
+                        document.getElementById("eventMessage").innerHTML = "Please Enter the Valid Date";
+                        document.getElementById("eventMessage").style.backgroundColor = 'red';
+                        showMsg();
+                        return
+                    }
+                    else if (date !== "" && dateString < today) {
+
+                        document.getElementById("eventMessage").innerHTML = "Please Enter the Valid Date";
+                        document.getElementById("eventMessage").style.backgroundColor = 'red';
+                        showMsg();
+                        return
+                    }
+                    else if (date !== "" && dateString > today) {
+
+                        eventObj.time = time;
+                    }
+                    else {
+
+                        document.getElementById("eventMessage").innerHTML = "Please Enter the Valid Time";
+                        document.getElementById("eventMessage").style.backgroundColor = 'red';
+                        showMsg();
+                        return
+                    }
+
                 }
                 else {
-                    
+
                     eventObj.time = time;
                 }
             }
@@ -344,12 +366,176 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
 
         var editedPost = {};
 
-        editedPost.title = document.getElementById('event-title').value;
-        editedPost.description = document.getElementById('event-description').value;
-        editedPost.location = document.getElementById('event-location').value;
-        editedPost.time = document.getElementById('event-time').value;
-        editedPost.date = document.getElementById('event-date').value;
-        editedPost.category = document.getElementById('event-category').value;
+        var editPost_Title = document.getElementById('event-title').value;
+        var editPost_category = document.getElementById('event-category').value;
+        var editPost_description = document.getElementById('event-description').value;
+        var editPost_location = document.getElementById('event-location').value;
+        var editPost_time = document.getElementById('event-time').value;
+        var editPost_date = document.getElementById('event-date').value;
+      
+        
+
+        //Validations
+
+
+        var currentDate = editPost_date.replace(/-/g, "/"); //Converting to proper date format which takes Standard Time into account.
+        var dateString = new Date(currentDate);
+        var today = new Date();
+        var current_time_hours = today.getHours();
+        var current_time_minutes = today.getMinutes();
+
+        today.setHours(0, 0, 0, 0) //This is required to compare the date without time into account. We will be validating time in other scenario.
+
+
+
+        // Validations 
+
+        if (editPost_Title === "") {
+            document.getElementById("eventMessage").innerHTML = "Please Enter the Event Title";
+            document.getElementById("eventMessage").style.backgroundColor = 'red';
+            showMsg();
+            return
+        } else {
+            editedPost.title = editPost_Title;
+        }
+
+        if (editPost_category === "none") {
+            document.getElementById("eventMessage").innerHTML = "Please Select the Event Category";
+            document.getElementById("eventMessage").style.backgroundColor = 'red';
+            showMsg();
+            return
+        } else {
+            editedPost.category = editPost_category;
+        }
+
+        if (editPost_description === "") {
+            document.getElementById("eventMessage").innerHTML = "Please Enter the Event Description";
+            document.getElementById("eventMessage").style.backgroundColor = 'red';
+            showMsg();
+            return
+        } else {
+            editedPost.description = editPost_description;
+        }
+
+        if (editPost_location === "") {
+            document.getElementById("eventMessage").innerHTML = "Please Enter the Event Location";
+            document.getElementById("eventMessage").style.backgroundColor = 'red';
+            showMsg();
+            return
+        } else {
+            editedPost.location = editPost_location;
+        }
+
+        if (editPost_time === "") {
+            document.getElementById("eventMessage").innerHTML = "Please Enter the Event Time";
+            document.getElementById("eventMessage").style.backgroundColor = 'red';
+            showMsg();
+            return
+        }
+        else {
+            var eventTime = editPost_time.split(":");
+            var eventTime_hours = eventTime[0];
+            var eventTime_minutes = eventTime[1];
+           
+           
+            if (eventTime_hours < current_time_hours) {
+
+                if (editPost_date === "") {
+
+                    document.getElementById("eventMessage").innerHTML = "Please Enter the Valid Date";
+                    document.getElementById("eventMessage").style.backgroundColor = 'red';
+                    showMsg();
+                    return
+                }
+                else if (editPost_date !== "" && dateString < today) {
+
+                    document.getElementById("eventMessage").innerHTML = "Please Enter the Valid Date";
+                    document.getElementById("eventMessage").style.backgroundColor = 'red';
+                    showMsg();
+                    return
+                }
+                else if (editPost_date !== "" && dateString > today) {
+                    
+                    eventObj.time = editPost_time;
+                }
+                else {
+                    
+                    document.getElementById("eventMessage").innerHTML = "Please Enter the Valid Time";
+                    document.getElementById("eventMessage").style.backgroundColor = 'red';
+                    showMsg();
+                    return
+                }
+
+
+            }
+            else if (eventTime_hours == current_time_hours) {
+
+                if (eventTime_minutes <= current_time_minutes) {
+
+                    if (editPost_date === "") {
+
+                        document.getElementById("eventMessage").innerHTML = "Please Enter the Valid Date";
+                        document.getElementById("eventMessage").style.backgroundColor = 'red';
+                        showMsg();
+                        return
+                    }
+
+                    else if (editPost_date !== "" && dateString < today) {
+
+                        document.getElementById("eventMessage").innerHTML = "Please Enter the Valid Date";
+                        document.getElementById("eventMessage").style.backgroundColor = 'red';
+                        showMsg();
+                        return
+                    }
+                    else if (editPost_date !== "" && dateString > today) {
+                    
+                        editedPost.time = editPost_time;
+                    }
+                    else {
+
+                        document.getElementById("eventMessage").innerHTML = "Please Enter the Valid Time";
+                        document.getElementById("eventMessage").style.backgroundColor = 'red';
+                        showMsg();
+                        return
+                    }
+                   
+                }
+                else {
+
+                    editedPost.time = editPost_time;
+                }
+            }
+            else {
+                editedPost.time = editPost_time;
+            }
+
+        }
+
+
+        if (editPost_date === "") {
+            document.getElementById("eventMessage").innerHTML = "Please Enter the Event Date";
+            document.getElementById("eventMessage").style.backgroundColor = 'red';
+            showMsg();
+            return
+        }
+
+        else if (editPost_date !== "" && dateString < today) {
+
+            document.getElementById("eventMessage").innerHTML = "Please choose a valid date";
+            document.getElementById("eventMessage").style.backgroundColor = 'red';
+            showMsg();
+            return
+        }
+        else {
+
+            editedPost.date = editPost_date;
+        }
+
+
+
+        //Validations
+
+
         editedPost.id = document.getElementById('event-id').value;
         editedPost.createdBy = document.getElementById('createdBy').value;
         editedPost.username = document.getElementById('event-username').value;
@@ -365,10 +551,33 @@ app.controller('ActivityController', ['$scope', '$firebaseArray', '$firebaseObje
             $(function () {
 
                 $("#eventMessage").text("Event has been edited successfully");
-                $("#eventMessage").slideDown();
+                document.getElementById("eventMessage").style.backgroundColor = 'green';
+
                 setTimeout(function () {
+                    $(function () {
+
+                        $("#newEvent #newPost:first-child ul").css("border", "3px solid blue");
+                        $("#newEvent #newPost:first-child ul li#categoryLabel").css("background", "blue");
+                    });
+                    $("#eventMessage").slideDown();
+                }, 500)
+
+                setTimeout(function () {
+
+                    $(function () {
+
+                        $("#newEvent #newPost:first-child ul").css("border", "none");
+                        $("#newEvent #newPost:first-child ul li#categoryLabel").css("background", "#419b80");
+                    });
                     $("#eventMessage").slideUp();
-                }, 3000)
+                }, 4000)
+
+
+                //$("#eventMessage").slideDown();
+                //setTimeout(function () {
+                //    $("#eventMessage").slideUp();
+                //}, 3000)
+                createdActivities();
             });
 
 

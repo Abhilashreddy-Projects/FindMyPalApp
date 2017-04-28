@@ -585,6 +585,9 @@
             text-align: center;
 
     }
+    footer p {
+        width:80%;
+    }
     .currentEventView {
         position:relative;
     }
