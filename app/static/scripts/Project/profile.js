@@ -3,7 +3,7 @@
 
 $(document).ready(function () {
 
-    
+
 
     var config = {
         apiKey: "AIzaSyD8_nEsadS4xowGxBSAzipb5r1uqRiu6V4",
@@ -18,7 +18,7 @@ $(document).ready(function () {
 
 
     var currentUrl = window.location.href;
-    
+
     var url_values = currentUrl.split('?');
     url_values = url_values[1].split('&');
 
@@ -65,9 +65,9 @@ $(document).ready(function () {
         $('#profilePic input').prop('readonly', true);
         $('#profilePic input[type=radio],#profilePic input[type=checkbox],#profilePic select,#profilePic input[type=file]').prop('disabled', true);
         $("#update_profile,.update_pic").hide();
-        
+
     }
-    
+
     //Sign out
 
     function profile(id) {
@@ -95,13 +95,13 @@ $(document).ready(function () {
             // $("#profile_picture").attr('src', snapshot.val().profile_picture);
         });
     }
-    
+
 
     //Profile Page
 
     $("#update_profile").click(function(){
-    
-        var userProfile= {}; 
+
+        var userProfile= {};
         userProfile.firstname = $("#firstname").val();
         userProfile.lastname = $("#lastname").val();
         userProfile.middlename = $("#middlename").val();
@@ -111,7 +111,7 @@ $(document).ready(function () {
         userProfile.eduction_level = $("input[name='education-level']:checked").val();
         userProfile.education_year = $("input[name='education-year']:checked").val();
 
-       
+
 
         var interested_category = [];
         $.each($("input[name='interested-category']:checked"), function () {
@@ -125,34 +125,39 @@ $(document).ready(function () {
         //Script for validation
 
         if (userProfile.firstname === "") {
-            
+
             document.getElementById('profilePageMsg').innerHTML = "Please update your First Name";
+            document.getElementById("profilePageMsg").style.backgroundColor = 'red';
             showMessage();
             return;
         }
         if (userProfile.lastname === "") {
-           
+
             document.getElementById('profilePageMsg').innerHTML = "Please update your Last Name";
+            document.getElementById("profilePageMsg").style.backgroundColor = 'red';
             showMessage();
             return;
         }
         if (userProfile.nickname === "") {
-           
+
             document.getElementById('profilePageMsg').innerHTML = "Please update your Nick Name";
+            document.getElementById("profilePageMsg").style.backgroundColor = 'red';
             showMessage();
             return;
         }
         if (userProfile.gender === "Choose Gender") {
-            
+
             document.getElementById('profilePageMsg').innerHTML = "Please update your Gender";
+            document.getElementById("profilePageMsg").style.backgroundColor = 'red';
             showMessage();
             return;
         }
 
         var educationLevel = $("input[name='education-level']:checked");
         if (educationLevel.length === 0) {
-           
+
             document.getElementById('profilePageMsg').innerHTML = "Please update your Education Level";
+            document.getElementById("profilePageMsg").style.backgroundColor = 'red';
             showMessage();
             return
         } else {
@@ -162,8 +167,9 @@ $(document).ready(function () {
         var educationYear = $("input[name='education-year']:checked");
         console.log(educationYear);
         if (educationYear.length == 0) {
-           
+
             document.getElementById('profilePageMsg').innerHTML = "Please update your Education Year";
+            document.getElementById("profilePageMsg").style.backgroundColor = 'red';
             showMessage();
             return;
         }
@@ -175,24 +181,25 @@ $(document).ready(function () {
             } else {
                 userProfile.education_year = otherYear;
             }
-            } */ 
+            } */
         else {
             userProfile.education_year = educationYear.val();
         }
 
 
         //script for validation
-         
-        
-    
+
+
+
         writeUserData(userProfile);
     });
-        
-    
-    
+
+
+
 
     function writeUserData(userProfile) {
         document.getElementById('profilePageMsg').innerHTML = "Your Profile has been Updated!!! ";
+        document.getElementById("profilePageMsg").style.backgroundColor = 'green';
         firebase.database().ref('user_profiles/' + currentUser.uid).set({
             displayName:currentUser.displayName,
             firstname: userProfile.firstname,
@@ -208,11 +215,11 @@ $(document).ready(function () {
 
         });
 
-       
+
         $(".success-msg").slideDown();
         setTimeout(function () {
             $(".success-msg").slideUp();
-        }, 3000) 
+        }, 3000)
     }
 
     function showMessage() {
@@ -223,16 +230,16 @@ $(document).ready(function () {
         }, 3000)
     }
 
-    //Profile Page 
+    //Profile Page
 
-   
-    
+
+
     var storageRef = firebase.storage().ref();
     var storageReference;
     function profilePicture(id) {
 
         // Create a root reference for storage
-        
+
         storageReference = firebase.storage().ref('/userProfilePictures/' + id);
 
         //Checking for an Profile picture
@@ -243,7 +250,7 @@ $(document).ready(function () {
             img.src = url;
         }).catch(function (error) {
 
-            // Attaching the image to the image source 
+            // Attaching the image to the image source
             storageRef.child('images/default-avatar.jpg').getDownloadURL().then(function (url) {
 
                 // Or inserted into an <img> element:
@@ -257,7 +264,7 @@ $(document).ready(function () {
         });
 
     }
-  
+
 
     //Uploading the profie picture
 
@@ -265,18 +272,18 @@ $(document).ready(function () {
         var file = this.files[0];
         var user = firebase.auth().currentUser;
         var user_id = user.uid;
-       
+
 
         storageReference.put(file).on('state_changed', function (snapshot) {
 
-            // Loading GIF while the image is uploading 
+            // Loading GIF while the image is uploading
             //storageRef.child('images/loading.gif').getDownloadURL().then(function (url) {
 
             //    // Or inserted into an <img> element:
             //    var img = document.getElementById('profile_picture');
             //    img.src = url;
 
-                
+
 
             //}).catch(function (error) {
             //    console.log(error.message);
@@ -296,23 +303,23 @@ $(document).ready(function () {
 
     });
 
-    //Signout function 
+    //Signout function
 
 
     $("#logout").on('click', function () {
 
         firebase.auth().signOut().then(function () {
             // Sign-out successful.
-            
+
         }, function (error) {
             // An error happened.
         });
 
     });
-   
-   
 
-    //Profile Page Forwarding 
+
+
+    //Profile Page Forwarding
 
     $(".activity #profile_picture").on('click', function () {
 
@@ -323,7 +330,7 @@ $(document).ready(function () {
 
     });
 
-    $(".profile #site-logo,#activityPage").on('click', function () {
+    $(".profile #site-logo,#activityPage,#siteTitle").on('click', function () {
 
 
         $("#homepage input").val(uid);
@@ -331,7 +338,7 @@ $(document).ready(function () {
 
 
     });
-   
+
 
 
 });
